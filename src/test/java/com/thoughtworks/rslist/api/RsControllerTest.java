@@ -28,6 +28,14 @@ class RsControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void should_get_one_rs_event_list() throws Exception {
+        mockMvc.perform(get("/rs/1"))
+                .andExpect(content().string("第一条事件"))
+                .andExpect(status().isOk());
+    }
+
+
 
 
 }
