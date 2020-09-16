@@ -59,7 +59,6 @@ public class RsController extends UserController{
     rsList.add(rsEvent);
 
     int index = this.rsList.indexOf(rsEvent);
-
     return ResponseEntity.created(null).header("Post-Header", String.valueOf(index));
 
   }

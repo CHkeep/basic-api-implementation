@@ -1,5 +1,8 @@
 package com.thoughtworks.rslist.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.*;
 
 public class User {
@@ -30,10 +33,11 @@ public class User {
         this.phone = phone;
     }
 
+//    @JsonIgnore
     public String getUserName() {
         return userName;
     }
-
+//    @JsonProperty
     public void setUserName(String userName) {
         this.userName = userName;
     }
