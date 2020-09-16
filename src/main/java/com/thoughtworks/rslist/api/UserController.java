@@ -11,12 +11,12 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
+//@RestController
 public class UserController {
     private List<User> userList = new ArrayList<>();
 
     @PostMapping("/user")
-    public void addUser(@RequestBody @Valid User user) {
+    public void addUser(@Valid @RequestBody  User user) {
         userList.add(user);
     }
     @GetMapping("/user")

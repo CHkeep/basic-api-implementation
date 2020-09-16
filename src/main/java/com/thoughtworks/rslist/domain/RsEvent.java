@@ -24,7 +24,7 @@ public class RsEvent {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(@Valid User user) {
         this.user = user;
     }
 

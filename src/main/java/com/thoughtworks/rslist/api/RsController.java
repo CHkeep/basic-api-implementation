@@ -3,15 +3,17 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 
 @RestController
-public class RsController {
+public class RsController extends UserController{
 
   private List<RsEvent> rsList = initReEventList();
 
@@ -27,21 +29,35 @@ public class RsController {
   }
 
   @GetMapping("/rs/{index}")
-  public RsEvent getOneRsEvent(@PathVariable int index) {
+  public @Valid RsEvent getOneRsEvent(@PathVariable int index) {
     return rsList.get(index - 1);
   }
 
   @GetMapping("/rs/list")
-  public List<RsEvent> getRsEvent(@RequestParam(required = false) Integer start, @RequestParam(required = false) Integer end) {
+  public @Valid List<RsEvent> getRsEvent(@RequestParam(required = false) Integer start, @RequestParam(required = false) Integer end) {
     if (start == null || end == null) {
       return rsList;
     }
     return rsList.subList(start - 1, end);
   }
 
+
   @PostMapping("/re/event")
-  public void addRsEvent(@RequestBody RsEvent rsEvent) {
+  public void addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
+//    int count = (int) rsList.stream()
+//            .filter(event->!event.getUser().getUserName().equals(rsEvent.getUser().getUserName()))
+//            .count();
+//    if(getUserList().size() == count) {
+//      addUser(rsEvent.getUser());
+//    }
+    UserController userController = new UserController();
+    List<User> userList = userController.getUserList();
+    if(!userList.contains(rsEvent.getUser())){
+      addUser(rsEvent.getUser());
+    }
+
     rsList.add(rsEvent);
+
   }
 
 
@@ -52,7 +68,7 @@ public class RsController {
 
   @PutMapping("/re/put/{id}")
   public void updateRsEvent(@PathVariable int id,
-                            @RequestBody RsEvent rsEvent) {
+                            @RequestBody @Valid RsEvent rsEvent) {
     if (rsEvent.getEventName().isEmpty()) {
       rsList.get(id - 1).setKeyWords(rsEvent.getKeyWords());
     }
