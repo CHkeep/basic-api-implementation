@@ -41,7 +41,7 @@ public class RsController {
   }
 
 
-  @DeleteMapping("/re/{id}")
+  @DeleteMapping("/rd/{id}")
   public void deleteRsEvent(@PathVariable int id) {
     rsList.remove(id - 1);
   }

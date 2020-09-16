@@ -1,11 +1,13 @@
 package com.thoughtworks.rslist.api;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.awt.*;
 
@@ -18,13 +20,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class RsControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
 
+
     @Test
+    @Order(1)
     public void should_get_one_rs_event_list() throws Exception {
         mockMvc.perform(get("/rs/1"))
                 .andExpect(jsonPath("$.eventName", is("第一条事件")))
@@ -45,6 +50,7 @@ class RsControllerTest {
     }
 
     @Test
+    @Order(2)
     public void should_get_some_rs_event_list() throws Exception {
         mockMvc.perform(get("/rs/list?start=1&end=2"))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -88,6 +94,7 @@ class RsControllerTest {
     }
 
     @Test
+    @Order(3)
     public void should_add_rs_event() throws Exception {
         String jsonString = "{\"eventName\": \"猪肉涨价了\", \"keyWords\":\"经济\"}";
         mockMvc.perform(post("/re/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
@@ -109,9 +116,9 @@ class RsControllerTest {
     }
 
     @Test
+    @Order(4)
     public void should_delete_rs_event() throws Exception {
-
-        mockMvc.perform(delete("/re/4")).andExpect(status().isOk());
+        mockMvc.perform(delete("/rd/4")).andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
@@ -125,8 +132,8 @@ class RsControllerTest {
     }
 
     @Test
+    @Order(5)
     public void should_put_event_name_rs_event() throws Exception {
-
         String jsonString = "{\"eventName\": \"第二条新闻\", \"keyWords\":\"\"}";
         mockMvc.perform(put("/re/put/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -142,7 +149,9 @@ class RsControllerTest {
                 .andExpect(jsonPath("$[3].keyWords", is("无标签")))
                 .andExpect(status().isOk());
     }
+
     @Test
+    @Order(6)
     public void should_put_key_words_rs_event() throws Exception {
         String jsonString = "{\"eventName\": \"\", \"keyWords\":\"价格\"}";
         mockMvc.perform(put("/re/put/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
@@ -159,7 +168,9 @@ class RsControllerTest {
                 .andExpect(jsonPath("$[3].keyWords", is("无标签")))
                 .andExpect(status().isOk());
     }
+
     @Test
+    @Order(7)
     public void should_put_rs_event() throws Exception {
         String jsonString = "{\"eventName\": \"股票跌了\", \"keyWords\":\"金融\"}";
         mockMvc.perform(put("/re/put/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
@@ -176,10 +187,5 @@ class RsControllerTest {
                 .andExpect(jsonPath("$[3].keyWords", is("无标签")))
                 .andExpect(status().isOk());
     }
-
-
-
-
-
 
 }
