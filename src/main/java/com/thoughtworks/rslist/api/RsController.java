@@ -3,12 +3,11 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -29,21 +28,23 @@ public class RsController extends UserController{
   }
 
   @GetMapping("/rs/{index}")
-  public @Valid RsEvent getOneRsEvent(@PathVariable int index) {
-    return rsList.get(index - 1);
+  public ResponseEntity getOneRsEvent(@PathVariable int index) {
+    return ResponseEntity.ok(rsList.get(index - 1));
   }
 
   @GetMapping("/rs/list")
-  public @Valid List<RsEvent> getRsEvent(@RequestParam(required = false) Integer start, @RequestParam(required = false) Integer end) {
+  public ResponseEntity getRsEvent(@RequestParam(required = false) Integer start, @RequestParam(required = false) Integer end) {
     if (start == null || end == null) {
-      return rsList;
+      return ResponseEntity.ok(rsList);
     }
-    return rsList.subList(start - 1, end);
+    return ResponseEntity.ok(rsList.subList(start - 1, end));
   }
 
 
+
   @PostMapping("/re/event")
-  public void addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
+//  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity.BodyBuilder addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
 //    int count = (int) rsList.stream()
 //            .filter(event->!event.getUser().getUserName().equals(rsEvent.getUser().getUserName()))
 //            .count();
@@ -55,19 +56,23 @@ public class RsController extends UserController{
     if(!userList.contains(rsEvent.getUser())){
       addUser(rsEvent.getUser());
     }
-
     rsList.add(rsEvent);
+
+    int index = this.rsList.indexOf(rsEvent);
+
+    return ResponseEntity.created(null).header("Post-Header", String.valueOf(index));
 
   }
 
 
   @DeleteMapping("/rd/{id}")
-  public void deleteRsEvent(@PathVariable int id) {
+  public ResponseEntity deleteRsEvent(@PathVariable int id) {
     rsList.remove(id - 1);
+    return ResponseEntity.created(null).build();
   }
 
   @PutMapping("/re/put/{id}")
-  public void updateRsEvent(@PathVariable int id,
+  public ResponseEntity updateRsEvent(@PathVariable int id,
                             @RequestBody @Valid RsEvent rsEvent) {
     if (rsEvent.getEventName().isEmpty()) {
       rsList.get(id - 1).setKeyWords(rsEvent.getKeyWords());
@@ -79,6 +84,8 @@ public class RsController extends UserController{
       rsList.get(id - 1).setKeyWords(rsEvent.getKeyWords());
       rsList.get(id - 1).setEventName(rsEvent.getEventName());
     }
+
+    return ResponseEntity.created(null).build();
 
   }
 }
