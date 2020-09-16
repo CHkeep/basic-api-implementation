@@ -2,6 +2,7 @@ package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
+import com.thoughtworks.rslist.domain.User;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -99,7 +100,8 @@ class RsControllerTest {
 
     @Test
     public void should_add_rs_event() throws Exception {
-        RsEvent rsEvent =  new RsEvent( "猪肉涨价了","经济");
+        User user = new User("xiaoli", 19, "male", "a@b.com", "18888888888");
+        RsEvent rsEvent = new RsEvent( "猪肉涨价了","经济", user);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/re/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
@@ -137,7 +139,10 @@ class RsControllerTest {
 
     @Test
     public void should_put_event_name_rs_event() throws Exception {
-        String jsonString = "{\"eventName\": \"第二条新闻\", \"keyWords\":\"\"}";
+        User user = new User("xiaoli", 19, "male", "a@b.com", "18888888888");
+        RsEvent rsEvent = new RsEvent( "第二条新闻","", user);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(put("/re/put/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
@@ -155,7 +160,10 @@ class RsControllerTest {
 
     @Test
     public void should_put_key_words_rs_event() throws Exception {
-        String jsonString = "{\"eventName\": \"\", \"keyWords\":\"价格\"}";
+        User user = new User("xiaoli", 19, "male", "a@b.com", "18888888888");
+        RsEvent rsEvent = new RsEvent( "","价格", user);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(put("/re/put/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
@@ -173,7 +181,10 @@ class RsControllerTest {
 
     @Test
     public void should_put_rs_event() throws Exception {
-        String jsonString = "{\"eventName\": \"股票跌了\", \"keyWords\":\"金融\"}";
+        User user = new User("xiaoli", 19, "male", "a@b.com", "18888888888");
+        RsEvent rsEvent = new RsEvent( "股票跌了","金融", user);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(put("/re/put/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))

@@ -2,6 +2,7 @@ package com.thoughtworks.rslist.api;
 
 
 import com.thoughtworks.rslist.domain.RsEvent;
+import com.thoughtworks.rslist.domain.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -16,10 +17,11 @@ public class RsController {
 
   private List<RsEvent> initReEventList() {
     List<RsEvent> rsEventList = new ArrayList<>();
-    rsEventList.add(new RsEvent("第一条事件", "无标签"));
-    rsEventList.add(new RsEvent("第二条事件", "无标签"));
-    rsEventList.add(new RsEvent("第三条事件", "无标签"));
-    rsEventList.add(new RsEvent("第四条事件", "无标签"));
+    User user = new User("xiaoli", 19, "male", "a@b.com", "18888888888");
+    rsEventList.add(new RsEvent("第一条事件", "无标签",user));
+    rsEventList.add(new RsEvent("第二条事件", "无标签",user));
+    rsEventList.add(new RsEvent("第三条事件", "无标签",user));
+    rsEventList.add(new RsEvent("第四条事件", "无标签",user));
 
     return rsEventList;
   }
@@ -51,10 +53,10 @@ public class RsController {
   @PutMapping("/re/put/{id}")
   public void updateRsEvent(@PathVariable int id,
                             @RequestBody RsEvent rsEvent) {
-    if (rsEvent.getEventName().isEmpty() && rsEvent.getKeyWords().length()!=0) {
+    if (rsEvent.getEventName().isEmpty()) {
       rsList.get(id - 1).setKeyWords(rsEvent.getKeyWords());
     }
-    if (rsEvent.getKeyWords().isEmpty() && rsEvent.getEventName().length()!=0) {
+    if (rsEvent.getKeyWords().isEmpty() ) {
       rsList.get(id - 1).setEventName(rsEvent.getEventName());
     }
     if (rsEvent.getEventName().length()!=0 && rsEvent.getKeyWords().length()!=0) {
