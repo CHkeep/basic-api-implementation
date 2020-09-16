@@ -20,16 +20,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class RsControllerTest {
 
-    @Autowired
+//    @Autowired
     MockMvc mockMvc;
 
-
+    @BeforeEach
+    public void init(){
+        mockMvc = MockMvcBuilders.standaloneSetup(new RsController()).build();
+    }
 
     @Test
-    @Order(1)
     public void should_get_one_rs_event_list() throws Exception {
         mockMvc.perform(get("/rs/1"))
                 .andExpect(jsonPath("$.eventName", is("第一条事件")))
@@ -50,7 +52,6 @@ class RsControllerTest {
     }
 
     @Test
-    @Order(2)
     public void should_get_some_rs_event_list() throws Exception {
         mockMvc.perform(get("/rs/list?start=1&end=2"))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -94,7 +95,6 @@ class RsControllerTest {
     }
 
     @Test
-    @Order(3)
     public void should_add_rs_event() throws Exception {
         String jsonString = "{\"eventName\": \"猪肉涨价了\", \"keyWords\":\"经济\"}";
         mockMvc.perform(post("/re/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
@@ -116,7 +116,6 @@ class RsControllerTest {
     }
 
     @Test
-    @Order(4)
     public void should_delete_rs_event() throws Exception {
         mockMvc.perform(delete("/rd/4")).andExpect(status().isOk());
         mockMvc.perform(get("/rs/list"))
@@ -132,7 +131,6 @@ class RsControllerTest {
     }
 
     @Test
-    @Order(5)
     public void should_put_event_name_rs_event() throws Exception {
         String jsonString = "{\"eventName\": \"第二条新闻\", \"keyWords\":\"\"}";
         mockMvc.perform(put("/re/put/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
@@ -151,7 +149,6 @@ class RsControllerTest {
     }
 
     @Test
-    @Order(6)
     public void should_put_key_words_rs_event() throws Exception {
         String jsonString = "{\"eventName\": \"\", \"keyWords\":\"价格\"}";
         mockMvc.perform(put("/re/put/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
@@ -170,7 +167,6 @@ class RsControllerTest {
     }
 
     @Test
-    @Order(7)
     public void should_put_rs_event() throws Exception {
         String jsonString = "{\"eventName\": \"股票跌了\", \"keyWords\":\"金融\"}";
         mockMvc.perform(put("/re/put/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
