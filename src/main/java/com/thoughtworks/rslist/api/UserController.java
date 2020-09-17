@@ -11,7 +11,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-//@RestController
+@RestController
 public class UserController {
     private List<User> userList = new ArrayList<>();
 

@@ -13,7 +13,7 @@ import java.util.List;
 
 
 @RestController
-public class RsController extends UserController{
+public class RsController {
 
   private List<RsEvent> rsList = initReEventList();
 
@@ -42,22 +42,14 @@ public class RsController extends UserController{
   }
 
 
-  @PostMapping("/re/event")
+  @PostMapping("/rs/event")
   public void addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
-//    int count = (int) rsList.stream()
-//            .filter(event->!event.getUser().getUserName().equals(rsEvent.getUser().getUserName()))
-//            .count();
-//    if(getUserList().size() == count) {
-//      addUser(rsEvent.getUser());
-//    }
     UserController userController = new UserController();
     List<User> userList = userController.getUserList();
     if(!userList.contains(rsEvent.getUser())){
-      addUser(rsEvent.getUser());
+      userList.add(rsEvent.getUser());
     }
-
     rsList.add(rsEvent);
-
   }
 
 
