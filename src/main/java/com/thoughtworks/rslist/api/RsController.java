@@ -99,7 +99,7 @@ public class RsController{
       errorMessage = e.getMessage();
     }
     Error error = new Error();
-    error.setError(e.getMessage());
+    error.setError(errorMessage);
     return ResponseEntity.badRequest().body(error);
   }
 }

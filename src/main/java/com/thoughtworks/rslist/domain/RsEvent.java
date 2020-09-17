@@ -21,11 +21,11 @@ public class RsEvent {
         this.keyWords = keyWords;
         this.user = user;
     }
-    @JsonIgnore
+//    @JsonIgnore
     public User getUser() {
         return user;
     }
-    @JsonProperty
+//    @JsonProperty
     public void setUser(@Valid User user) {
         this.user = user;
     }
