@@ -5,8 +5,10 @@ import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.exception.ReEventNotValidException;
 import com.thoughtworks.rslist.exception.Error;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -15,7 +17,7 @@ import java.util.List;
 
 
 @RestController
-public class RsController extends UserController{
+public class RsController{
 
   private List<RsEvent> rsList = initReEventList();
 
@@ -43,30 +45,25 @@ public class RsController extends UserController{
     if (start == null || end == null) {
       return ResponseEntity.ok(rsList);
     }
+    if(start <= 0 || end > rsList.size() || start > end){
+      throw new ReEventNotValidException("invalid request param");
+    }
+
     return ResponseEntity.ok(rsList.subList(start - 1, end));
   }
 
-
-
-  @PostMapping("/re/event")
+  @PostMapping("/rs/event")
 //  @ResponseStatus(HttpStatus.CREATED)
-  public ResponseEntity.BodyBuilder addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
-//    int count = (int) rsList.stream()
-//            .filter(event->!event.getUser().getUserName().equals(rsEvent.getUser().getUserName()))
-//            .count();
-//    if(getUserList().size() == count) {
-//      addUser(rsEvent.getUser());
-//    }
+  public ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
     UserController userController = new UserController();
     List<User> userList = userController.getUserList();
     if(!userList.contains(rsEvent.getUser())){
-      addUser(rsEvent.getUser());
+      userList.add(rsEvent.getUser());
     }
     rsList.add(rsEvent);
-
-    int index = this.rsList.indexOf(rsEvent);
-    return ResponseEntity.created(null).header("Post-Header", String.valueOf(index));
-
+    //返回201，并且返回的头部带上index字段
+     String index = String.valueOf(this.rsList.indexOf(rsEvent));
+     return ResponseEntity.status(HttpStatus.CREATED).header("index",index).build();
   }
 
 
