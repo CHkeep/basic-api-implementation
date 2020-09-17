@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.awt.*;
+import java.util.logging.Handler;
 
 
 import static org.hamcrest.Matchers.*;
@@ -28,6 +29,7 @@ class RsControllerTest {
 
 //    @Autowired
     MockMvc mockMvc;
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     public void init(){
@@ -117,10 +119,10 @@ class RsControllerTest {
     public void should_add_rs_event() throws Exception {
         User user = new User("xiaochen", 18, "male", "a@b.com", "18888888888");
         RsEvent rsEvent = new RsEvent( "猪肉涨价了","经济", user);
-        ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(rsEvent);
-        mockMvc.perform(post("/re/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isInternalServerError());
+        mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(header().string("index","4"))
+                .andExpect(status().isCreated());
 
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$", hasSize(5)))
@@ -140,34 +142,32 @@ class RsControllerTest {
                 .andExpect(jsonPath("$[4].keyWords", is("经济")))
                 .andExpect(jsonPath("$[4]", not(hasKey("user"))))
                 .andExpect(status().isOk());
+    }
 
-//        User user1 = new User("xiaozheng", 15, "male", "c@b.com", "16888888888");
-//        RsEvent rsEvent1 = new RsEvent( "股票跌了","经济", user1);
-//        String jsonString1 = objectMapper.writeValueAsString(rsEvent1);
-//        mockMvc.perform(post("/re/event").content(jsonString1).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isInternalServerError());;
-//
-//        mockMvc.perform(get("/rs/list"))
-//                .andExpect(jsonPath("$", hasSize(6)))
-//                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-//                .andExpect(jsonPath("$[0].keyWords", is("无标签")))
-//                .andExpect(jsonPath("$[0]", not(hasKey("user"))))
-//                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-//                .andExpect(jsonPath("$[1].keyWords", is("无标签")))
-//                .andExpect(jsonPath("$[1]", not(hasKey("user"))))
-//                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-//                .andExpect(jsonPath("$[2].keyWords", is("无标签")))
-//                .andExpect(jsonPath("$[2]", not(hasKey("user"))))
-//                .andExpect(jsonPath("$[3].eventName", is("第四条事件")))
-//                .andExpect(jsonPath("$[3].keyWords", is("无标签")))
-//                .andExpect(jsonPath("$[3]", not(hasKey("user"))))
-//                .andExpect(jsonPath("$[4].eventName", is("猪肉涨价了")))
-//                .andExpect(jsonPath("$[4].keyWords", is("经济")))
-//                .andExpect(jsonPath("$[4]", not(hasKey("user"))))
-//                .andExpect(jsonPath("$[5].eventName", is("股票跌了")))
-//                .andExpect(jsonPath("$[5].keyWords", is("经济")))
-//                .andExpect(jsonPath("$[5]", not(hasKey("user"))))
-//                .andExpect(status().isOk());
+    @Test
+    public void should_add_rs_event_fail() throws Exception {
+        User user = new User("xiaozheng", 15, "male", "c@b.com", "16888888888");
+        RsEvent rsEvent = new RsEvent( "股票跌了","经济", user);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(header().string("index","4"))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(get("/rs/list"))
+                .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
+                .andExpect(jsonPath("$[0].keyWords", is("无标签")))
+                .andExpect(jsonPath("$[0]", not(hasKey("user"))))
+                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
+                .andExpect(jsonPath("$[1].keyWords", is("无标签")))
+                .andExpect(jsonPath("$[1]", not(hasKey("user"))))
+                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
+                .andExpect(jsonPath("$[2].keyWords", is("无标签")))
+                .andExpect(jsonPath("$[2]", not(hasKey("user"))))
+                .andExpect(jsonPath("$[3].eventName", is("第四条事件")))
+                .andExpect(jsonPath("$[3].keyWords", is("无标签")))
+                .andExpect(jsonPath("$[3]", not(hasKey("user"))))
+                .andExpect(status().isOk());
     }
 
     @Test
