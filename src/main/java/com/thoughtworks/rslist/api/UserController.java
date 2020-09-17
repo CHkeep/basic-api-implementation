@@ -19,6 +19,7 @@ public class UserController {
     public void addUser(@Valid @RequestBody  User user) {
         userList.add(user);
     }
+
     @GetMapping("/user")
     public List<User> getUserList(){
         return userList;
