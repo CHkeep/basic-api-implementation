@@ -45,11 +45,15 @@ public class UserService {
     }
 
 
-    public User findById(int id) {
+    public User getUserById(int id) {
        Optional<UserPO> userPO = userRepository.findById(id);
        User user = User.builder().userName(userPO.get().getUserName())
                .age(userPO.get().getAge()).email(userPO.get().getEmail()).gender(userPO.get().getGender())
                .phone(userPO.get().getPhone()).voteNum(userPO.get().getVoteNum()).build();
        return user;
+    }
+
+    public void deleteUser(int id) {
+        userRepository.deleteById((int)id);
     }
 }

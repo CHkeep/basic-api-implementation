@@ -3,8 +3,6 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.exception.Error;
-import com.thoughtworks.rslist.po.UserPO;
-import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -31,8 +28,13 @@ public class UserController {
 
     @GetMapping("/user/{id}")
     public User getUserById(@PathVariable int id){
-        User user = userService.findById(id);
+        User user = userService.getUserById(id);
         return user;
+    }
+
+    @DeleteMapping("/user/{id}")
+    public void deleteUserById(@PathVariable int id){
+        userService.deleteUser(id);
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
