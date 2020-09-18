@@ -1,12 +1,15 @@
 package com.thoughtworks.rslist.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.po.UserPO;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+import static org.springframework.http.codec.ServerSentEvent.builder;
+
 
 @Service
 public class UserService {
@@ -42,4 +45,11 @@ public class UserService {
     }
 
 
+    public User findById(int id) {
+       Optional<UserPO> userPO = userRepository.findById(id);
+       User user = User.builder().userName(userPO.get().getUserName())
+               .age(userPO.get().getAge()).email(userPO.get().getEmail()).gender(userPO.get().getGender())
+               .phone(userPO.get().getPhone()).voteNum(userPO.get().getVoteNum()).build();
+       return user;
+    }
 }

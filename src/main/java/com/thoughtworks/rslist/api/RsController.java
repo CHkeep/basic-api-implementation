@@ -55,11 +55,11 @@ public class RsController{
   @PostMapping("/rs/event")
 //  @ResponseStatus(HttpStatus.CREATED)
   public ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
-    UserController userController = new UserController();
-    List<User> userList = userController.getUserList();
-    if(!userList.contains(rsEvent.getUser())){
-      userList.add(rsEvent.getUser());
-    }
+//    UserController userController = new UserController();
+////    List<User> userList = userController.getUserList();
+//    if(!userList.contains(rsEvent.getUser())){
+//      userList.add(rsEvent.getUser());
+//    }
     rsList.add(rsEvent);
     //返回201，并且返回的头部带上index字段
      String index = String.valueOf(this.rsList.indexOf(rsEvent));

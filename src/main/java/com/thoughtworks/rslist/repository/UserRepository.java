@@ -10,5 +10,8 @@ public interface UserRepository extends CrudRepository<UserPO, Integer> {
     @Override
     List<UserPO> findAll();
 
+    @Override
+    Optional<UserPO> findById(Integer integer);
+
     public boolean findByUserName(String name);
 }

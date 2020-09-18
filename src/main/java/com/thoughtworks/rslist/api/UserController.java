@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -28,9 +29,10 @@ public class UserController {
        userService.addRegisterUser(user);
     }
 
-    @GetMapping("/user")
-    public List<User> getUserList(){
-        return userList;
+    @GetMapping("/user/{id}")
+    public User getUserById(@PathVariable int id){
+        User user = userService.findById(id);
+        return user;
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})

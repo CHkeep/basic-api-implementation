@@ -2,12 +2,16 @@ package com.thoughtworks.rslist.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @NotNull
     @Size(max = 8)
