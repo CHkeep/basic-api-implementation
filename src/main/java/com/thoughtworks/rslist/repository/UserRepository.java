@@ -13,7 +13,7 @@ public interface UserRepository extends CrudRepository<UserPO, Integer> {
     @Override
     Optional<UserPO> findById(Integer integer);
 
-    public boolean findByUserName(String name);
+    boolean findByUserName(String name);
 
     @Override
     void deleteById(Integer integer);
