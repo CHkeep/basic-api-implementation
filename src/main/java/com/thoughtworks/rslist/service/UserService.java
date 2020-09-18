@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static org.springframework.http.codec.ServerSentEvent.builder;
 
 
 @Service
@@ -36,21 +35,16 @@ public class UserService {
     }
 
     public boolean findByUserName(String name){
-        boolean isPresent = userRepository.findAll().stream()
-                .filter(userPO -> userPO.getUserName().equals(name))
-                .findAny()
-                .isPresent();
-
-        return isPresent;
+        return userRepository.findAll().stream()
+                .anyMatch(userPO -> userPO.getUserName().equals(name));
     }
 
 
     public User getUserById(int id) {
        Optional<UserPO> userPO = userRepository.findById(id);
-       User user = User.builder().userName(userPO.get().getUserName())
-               .age(userPO.get().getAge()).email(userPO.get().getEmail()).gender(userPO.get().getGender())
-               .phone(userPO.get().getPhone()).voteNum(userPO.get().getVoteNum()).build();
-       return user;
+        return User.builder().userName(userPO.get().getUserName())
+                .age(userPO.get().getAge()).email(userPO.get().getEmail()).gender(userPO.get().getGender())
+                .phone(userPO.get().getPhone()).voteNum(userPO.get().getVoteNum()).build();
     }
 
     public void deleteUser(int id) {
