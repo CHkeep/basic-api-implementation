@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -32,18 +33,49 @@ class UserControllerTest {
     @BeforeEach
     void  setUp(){
         objectMapper = new ObjectMapper();
+        //清理数据库
     }
 
     @Test
+    @Order(1)
     public void should_register_user() throws Exception {
         User user = new User("xiaoli",  "male", 19,"a@b.com", "18888888888");
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-
     }
 
+    @Test
+    @Order(2)
+    public void user_name_should_less_8() throws Exception {
+        User user = new User("xiaolidddddd", "male", 19, "a@b.com", "18888888888");
+        String jsonString = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid user")));
+    }
+
+    @Test
+    @Order(3)
+    public void age_should_between_18_and_100() throws Exception {
+        User user = new User("xiaolid", "male", 15, "a@b.com", "18888888888");
+        String jsonString = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid user")));
+    }
+
+    @Test
+    @Order(4)
+    public void email_should_suit_format() throws Exception {
+        User user = new User("xiaohong", "male", 20, "ab.com", "18888888888");
+        String jsonString = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid user")));
+
+    }
 
 
 

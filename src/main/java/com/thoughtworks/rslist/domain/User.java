@@ -26,11 +26,10 @@ public class User {
 
     public User(String userName, String gender, int age, String email, String phone) {
         this.userName = userName;
-        this.age = age;
         this.gender = gender;
+        this.age = age;
         this.email = email;
         this.phone = phone;
     }
-
 }
 

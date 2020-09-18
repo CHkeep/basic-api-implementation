@@ -5,7 +5,9 @@ import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.exception.Error;
 import com.thoughtworks.rslist.po.UserPO;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -19,18 +21,11 @@ public class UserController {
     private List<User> userList = new ArrayList<>();
 
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
     @PostMapping("/user")
     public void addUser(@Valid @RequestBody User user) {
-        UserPO userPO = new UserPO();
-        userPO.setAge(user.getAge());
-        userPO.setEmail(user.getEmail());
-        userPO.setGender(user.getGender());
-        userPO.setUserName(user.getUserName());
-        userPO.setPhone(user.getPhone());
-        userPO.setVoteNum(user.getVoteNum());
-        userRepository.save(userPO);
+       userService.addRegisterUser(user);
     }
 
     @GetMapping("/user")
