@@ -76,23 +76,12 @@ public class RsController{
     return ResponseEntity.created(null).build();
   }
 
-  @PutMapping("/re/put/{id}")
-  public ResponseEntity updateRsEvent(@PathVariable int id,
-                                      @RequestBody @Valid RsEvent rsEvent) {
-    if (rsEvent.getEventName().isEmpty()) {
-      rsList.get(id - 1).setKeyWords(rsEvent.getKeyWords());
-    }
-    if (rsEvent.getKeyWords().isEmpty() ) {
-      rsList.get(id - 1).setEventName(rsEvent.getEventName());
-    }
-    if (rsEvent.getEventName().length()!=0 && rsEvent.getKeyWords().length()!=0) {
-      rsList.get(id - 1).setKeyWords(rsEvent.getKeyWords());
-      rsList.get(id - 1).setEventName(rsEvent.getEventName());
-    }
-
-    return ResponseEntity.created(null).build();
+  @PatchMapping("/rs/{rsEventId}")
+  public ResponseEntity pathRsEvent (@PathVariable int rsEventId, @RequestBody @Valid RsEvent rsEvent){
+    return rsEventService.updateRsEvent(rsEvent,rsEventId);
   }
-
-
 }
+
+
+
 

@@ -54,11 +54,7 @@ class RsControllerTest {
             objectMapper = new ObjectMapper();
             //清理数据库
             userRepository.deleteAll();
-
-//            UserPO userPO= UserPO.builder().userName("yangyuling").age(18).gender("female").phone("19966999999").voteNum(10).build();
-//            userRepository.save(userPO);
-//            RsEventPO rsEventPO = RsEventPO.builder().eventName("股票").keyWords("金融").userPO(userPO).build();
-//            rsEventRepository.save(rsEventPO);
+            userRepository.deleteAll();
         }
 
     @Test
@@ -117,43 +113,69 @@ class RsControllerTest {
 
     @Test
     @Order(6)
-    public void should_put_event_name_rs_event() throws Exception {
-        System.out.println(5);
-        User user = new User("xiaoli", "male", 22, "a@b.com", "18888888888");
-        RsEvent rsEvent = new RsEvent( "第二条新闻","", 1);
-        ObjectMapper objectMapper = new ObjectMapper();
+    public void should_patch_event_rs_event() throws Exception {
+        UserPO userPO= UserPO.builder().userName("yangli").age(18).email("a@b.com").gender("female").phone("19966999999").voteNum(10).build();
+        userRepository.save(userPO);
+        RsEventPO rsEventPO = RsEventPO.builder().eventName("股票").keyWords("金融").userPO(userPO).build();
+        rsEventRepository.save(rsEventPO);
+        RsEvent rsEvent = RsEvent.builder().eventName("电影").keyWords("票").userId(userPO.getId()).build();
         String jsonString = objectMapper.writeValueAsString(rsEvent);
-        mockMvc.perform(put("/re/put/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+        mockMvc.perform(patch("/rs/{rsEventId}",rsEventPO.getId()).content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        assertEquals("电影",rsEventRepository.findById(rsEventPO.getId()).get().getEventName());
+        assertEquals("票",rsEventRepository.findById(rsEventPO.getId()).get().getKeyWords());
     }
 
     @Test
     @Order(7)
-    public void should_put_key_words_rs_event() throws Exception {
-        System.out.println(6);
-        User user = new User("xiaoli", "male", 22, "a@b.com", "18888888888");
-        RsEvent rsEvent = new RsEvent( "","价格", 1);
-        ObjectMapper objectMapper = new ObjectMapper();
+    public void should_patch_event_name_rs_event() throws Exception {
+        UserPO userPO= UserPO.builder().userName("yangli").age(18).email("a@b.com").gender("female").phone("19966999999").voteNum(10).build();
+        userRepository.save(userPO);
+        RsEventPO rsEventPO = RsEventPO.builder().eventName("股票").keyWords("金融").userPO(userPO).build();
+        rsEventRepository.save(rsEventPO);
+        RsEvent rsEvent = RsEvent.builder().eventName("电影").userId(userPO.getId()).build();
         String jsonString = objectMapper.writeValueAsString(rsEvent);
-        mockMvc.perform(put("/re/put/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+        mockMvc.perform(patch("/rs/{rsEventId}",rsEventPO.getId()).content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        assertEquals("电影",rsEventRepository.findById(rsEventPO.getId()).get().getEventName());
+        assertEquals("金融",rsEventRepository.findById(rsEventPO.getId()).get().getKeyWords());
 
     }
 
     @Test
     @Order(8)
-    public void should_put_rs_event() throws Exception {
-        User user = new User("xiaoli", "male", 22, "a@b.com", "18888888888");
-        RsEvent rsEvent = new RsEvent( "股票跌了","金融", 1);
-        ObjectMapper objectMapper = new ObjectMapper();
+    public void should_patch_key_words_rs_event() throws Exception {
+        UserPO userPO= UserPO.builder().userName("yangli").age(18).email("a@b.com").gender("female").phone("19966999999").voteNum(10).build();
+        userRepository.save(userPO);
+        RsEventPO rsEventPO = RsEventPO.builder().eventName("股票").keyWords("金融").userPO(userPO).build();
+        rsEventRepository.save(rsEventPO);
+        RsEvent rsEvent = RsEvent.builder().keyWords("文化").userId(userPO.getId()).build();
         String jsonString = objectMapper.writeValueAsString(rsEvent);
-        mockMvc.perform(put("/re/put/2").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+        mockMvc.perform(patch("/rs/{rsEventId}",rsEventPO.getId()).content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        assertEquals("股票",rsEventRepository.findById(rsEventPO.getId()).get().getEventName());
+        assertEquals("文化",rsEventRepository.findById(rsEventPO.getId()).get().getKeyWords());
 
     }
 
     @Test
     @Order(9)
+    public void should_patch_error_user_id() throws Exception {
+        UserPO userPO= UserPO.builder().userName("yangli").age(18).email("a@b.com").gender("female").phone("19966999999").voteNum(10).build();
+        userRepository.save(userPO);
+        RsEventPO rsEventPO = RsEventPO.builder().eventName("股票").keyWords("金融").userPO(userPO).build();
+        rsEventRepository.save(rsEventPO);
+        RsEvent rsEvent = RsEvent.builder().keyWords("文化").userId(userPO.getId()+1).build();
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(patch("/rs/{rsEventId}",rsEventPO.getId()).content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+        assertEquals("股票",rsEventRepository.findById(rsEventPO.getId()).get().getEventName());
+        assertEquals("金融",rsEventRepository.findById(rsEventPO.getId()).get().getKeyWords());
+
+    }
+
+    @Test
+    @Order(10)
     public void should_throw_rs_event_not_valid_exception() throws Exception {
         mockMvc.perform(get("/rs/0"))
                 .andExpect(status().isBadRequest())
@@ -162,7 +184,7 @@ class RsControllerTest {
     }
 
     @Test
-    @Order(10)
+    @Order(11)
     public void should_throw_rs_event_not_valid_param_exception() throws Exception{
         mockMvc.perform(get("/rs/list?start=0&end=4"))
                 .andExpect(status().isBadRequest())

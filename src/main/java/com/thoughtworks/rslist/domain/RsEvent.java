@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 
 @Builder
 public class RsEvent {
-    @NotNull
+//    @NotNull
     private String eventName;
 //    @NotNull
     private String keyWords;
@@ -22,7 +22,7 @@ public class RsEvent {
     public RsEvent() {
     }
 
-    public RsEvent(@NotNull String eventName, @NotNull String keyWords, @NotNull int userId) {
+    public RsEvent( String eventName,  String keyWords,  int userId) {
         this.eventName = eventName;
         this.keyWords = keyWords;
         this.userId = userId;

@@ -41,9 +41,23 @@ public class RsEventService {
             //返回201，并且返回的头部带上index字段
             String index = String.valueOf(rsEventPO.getId());
             return ResponseEntity.status(HttpStatus.CREATED).header("index", index).build();
-
         }
+    }
 
+
+    public ResponseEntity updateRsEvent(@Valid RsEvent rsEvent, int rsEventId) {
+        RsEventPO rsEventPO = rsEventRepository.findById(rsEventId).get();
+        if(rsEventPO.getUserPO().getId() != rsEvent.getUserId()) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (rsEvent.getEventName() != null) {
+            rsEventPO.setEventName(rsEvent.getEventName());
+        }
+        if (rsEvent.getKeyWords() != null) {
+            rsEventPO.setKeyWords(rsEvent.getKeyWords());
+        }
+        rsEventRepository.save(rsEventPO );
+        return ResponseEntity.ok().build();
     }
 
     @ExceptionHandler({ReEventNotValidException.class, MethodArgumentNotValidException.class})
@@ -58,5 +72,6 @@ public class RsEventService {
         error.setError(errorMessage);
         return ResponseEntity.badRequest().body(error);
     }
+
 
 }

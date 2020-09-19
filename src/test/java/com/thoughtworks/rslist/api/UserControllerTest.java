@@ -42,6 +42,8 @@ class UserControllerTest {
         userRepository.deleteAll();
         rsEventRepository.deleteAll();
         objectMapper = new ObjectMapper();
+        UserPO userPO= UserPO.builder().userName("xiaochen").age(18).gender("female").phone("15366999999").voteNum(10).build();
+        userRepository.save(userPO);
     }
 
     @Test
@@ -111,7 +113,7 @@ class UserControllerTest {
     protected void should_delete_user_by_id() throws Exception {
         UserPO userPO= UserPO.builder().userName("xiaoyu").age(18).gender("female").phone("19366999999").voteNum(10).build();
         userRepository.save(userPO);
-        RsEventPO rsEventPO1 = RsEventPO.builder().eventName("xiao1").keyWords("金融1").userPO(userPO).build();
+        RsEventPO rsEventPO1 = RsEventPO.builder().eventName("xiao").keyWords("金融1").userPO(userPO).build();
         rsEventRepository.save(rsEventPO1);
         RsEventPO rsEventPO = RsEventPO.builder().eventName("xiao").keyWords("金融").userPO(userPO).build();
         rsEventRepository.save(rsEventPO);
