@@ -20,8 +20,10 @@ public class RsEventPO {
     @Column(name = "name")
     private String eventName;
     private String keyWords;
+    private  int voteNum = 0;
     @ManyToOne
     private UserPO userPO;
+
 }
 
 

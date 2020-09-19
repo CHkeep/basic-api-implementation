@@ -35,18 +35,10 @@ public class UserController {
     }
 
     @DeleteMapping("/user/{id}")
-//    @Transactional
+//  @Transactional
     public ResponseEntity deleteUserById(@PathVariable int id){
         userRepository.deleteById(id);
         return ResponseEntity.ok().build();
-    }
-
-    @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ResponseEntity rsExceptionHandler(Exception e){
-        String errorMessage = "invalid user";;
-        Error error = new Error();
-        error.setError(errorMessage);
-        return ResponseEntity.badRequest().body(error);
     }
 
 }

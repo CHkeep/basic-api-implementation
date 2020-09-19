@@ -6,6 +6,7 @@ import com.thoughtworks.rslist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 
@@ -17,14 +18,14 @@ public class UserService {
     UserRepository userRepository;
 
 
-    public void addRegisterUser(User user) {
+    public void addRegisterUser(@Valid User user) {
         boolean isPresent = findByUserName(user.getUserName());
         if(!isPresent){
             addRegister(user);
         }
     }
 
-    public void addRegister(User user){
+    public void addRegister(@Valid User user){
         UserPO userPO = new UserPO();
         userPO.setAge(user.getAge());
         userPO.setEmail(user.getEmail());

@@ -41,15 +41,16 @@ class UserControllerTest {
         //现场清理
         userRepository.deleteAll();
         rsEventRepository.deleteAll();
+
         objectMapper = new ObjectMapper();
-        UserPO userPO= UserPO.builder().userName("xiaochen").age(18).gender("female").phone("15366999999").voteNum(10).build();
+        UserPO userPO= UserPO.builder().userName("xiaochen").age(18).gender("female").phone("10000000001").voteNum(10).build();
         userRepository.save(userPO);
     }
 
     @Test
     @Order(1)
     public void should_register_user() throws Exception {
-        User user = new User("xiaoli",  "male", 19,"a@b.com", "18888888888");
+        User user = new User("lizi",  "male", 19,"a@b.com", "10000000002",10);
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -58,7 +59,7 @@ class UserControllerTest {
     @Test
     @Order(2)
     public void user_name_should_less_8() throws Exception {
-        User user = new User("xiaolidddddd", "male", 19, "a@b.com", "18888888888");
+        User user = new User("xiaolidddddd", "male", 19, "a@b.com", "18888888888",10);
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -68,7 +69,7 @@ class UserControllerTest {
     @Test
     @Order(3)
     public void age_should_between_18_and_100() throws Exception {
-        User user = new User("xiaolid", "male", 15, "a@b.com", "18888888888");
+        User user = new User("xiaolid", "male", 15, "a@b.com", "18888888888",10);
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -78,7 +79,7 @@ class UserControllerTest {
     @Test
     @Order(4)
     public void email_should_suit_format() throws Exception {
-        User user = new User("xiaohong", "male", 20, "ab.com", "18888888888");
+        User user = new User("xiaohong", "male", 20, "ab.com", "18888888888",10);
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -89,7 +90,7 @@ class UserControllerTest {
     @Test
     @Order(5)
     public void should_register_user_fail() throws Exception {
-        User user = new User("xiaoli",  "male", 19,"a@b.com", "18888888888");
+        User user = new User("xiaoli",  "male", 19,"a@b.com", "18888888888",10);
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

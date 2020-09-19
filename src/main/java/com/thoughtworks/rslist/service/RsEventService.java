@@ -1,7 +1,6 @@
 package com.thoughtworks.rslist.service;
 
 import com.thoughtworks.rslist.domain.RsEvent;
-import com.thoughtworks.rslist.exception.Error;
 import com.thoughtworks.rslist.exception.ReEventNotValidException;
 import com.thoughtworks.rslist.po.RsEventPO;
 import com.thoughtworks.rslist.po.UserPO;
@@ -10,13 +9,13 @@ import com.thoughtworks.rslist.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RsEventService {
@@ -34,9 +33,12 @@ public class RsEventService {
         if(!userPO.isPresent()){
             return ResponseEntity.badRequest().build();
         }else {
-            RsEventPO rsEventPO = RsEventPO.builder().eventName(rsEvent.getEventName())
+            RsEventPO rsEventPO = RsEventPO.builder()
+                    .eventName(rsEvent.getEventName())
                     .keyWords(rsEvent.getKeyWords())
-                    .userPO(userPO.get()).build();
+                    .userPO(userPO.get())
+                    .voteNum(0)
+                    .build();
             rsEventRepository.save(rsEventPO);
             //返回201，并且返回的头部带上index字段
             String index = String.valueOf(rsEventPO.getId());
@@ -48,7 +50,7 @@ public class RsEventService {
     public ResponseEntity updateRsEvent(@Valid RsEvent rsEvent, int rsEventId) {
         RsEventPO rsEventPO = rsEventRepository.findById(rsEventId).get();
         if(rsEventPO.getUserPO().getId() != rsEvent.getUserId()) {
-            return ResponseEntity.badRequest().build();
+            throw new ReEventNotValidException("invalid param");
         }
         if (rsEvent.getEventName() != null) {
             rsEventPO.setEventName(rsEvent.getEventName());
@@ -60,18 +62,33 @@ public class RsEventService {
         return ResponseEntity.ok().build();
     }
 
-    @ExceptionHandler({ReEventNotValidException.class, MethodArgumentNotValidException.class})
-    public ResponseEntity rsExceptionHandler(Exception e){
-        String errorMessage;
-        if(e instanceof MethodArgumentNotValidException){
-            errorMessage = "invalid param";
-        }else {
-            errorMessage = e.getMessage();
+
+    public ResponseEntity<List<RsEvent>> getSomeEvent(Integer start, Integer end) {
+        List<RsEventPO> rsEventPOList = rsEventRepository.findAll().subList(start, end);
+        List<RsEvent> rsEventList = rsEventPOList.stream().map(rsEventPO ->
+                RsEvent.builder().keyWords(rsEventPO.getKeyWords())
+               .eventName(rsEventPO.getEventName())
+               .voteNum(rsEventPO.getVoteNum()).build())
+               .collect(Collectors.toList());
+        if (start == null || end == null) {
+            return ResponseEntity.ok(rsEventList);
         }
-        Error error = new Error();
-        error.setError(errorMessage);
-        return ResponseEntity.badRequest().body(error);
+        if(start > end || start <= 0 || end > rsEventList.size()){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(rsEventList.subList(start - 1, end));
     }
 
+    public ResponseEntity<RsEvent> getOneEvent(int index) {
+        if(index <= 0 || index > rsEventRepository.findAll().size()){
+            throw new ReEventNotValidException("invalid index");
+        }
+        Optional<RsEventPO> rsEventPO = rsEventRepository.findById(index);
+        RsEvent rsEvent = RsEvent.builder().keyWords(rsEventPO.get().getKeyWords())
+                        .eventName(rsEventPO.get().getEventName())
+                        .voteNum(rsEventPO.get().getVoteNum()).build();
+
+        return ResponseEntity.ok(rsEvent);
+    }
 
 }
