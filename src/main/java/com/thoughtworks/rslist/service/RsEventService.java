@@ -7,6 +7,7 @@ import com.thoughtworks.rslist.po.RsEventPO;
 import com.thoughtworks.rslist.po.UserPO;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,17 +29,21 @@ public class RsEventService {
     }
 
 
-    public void addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
+    public ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
         Optional<UserPO> userPO = userRepository.findById(rsEvent.getUserId());
         if(!userPO.isPresent()){
-            throw new ReEventNotValidException("Unregistered user");
+            return ResponseEntity.badRequest().build();
         }else {
             RsEventPO rsEventPO = RsEventPO.builder().eventName(rsEvent.getEventName())
                     .keyWords(rsEvent.getKeyWords())
-                    .userId(rsEvent.getUserId()).build();
-            System.out.println(rsEventPO.getEventName());
+                    .userPO(userPO.get()).build();
             rsEventRepository.save(rsEventPO);
+            //返回201，并且返回的头部带上index字段
+            String index = String.valueOf(rsEventPO.getId());
+            return ResponseEntity.status(HttpStatus.CREATED).header("index", index).build();
+
         }
+
     }
 
     @ExceptionHandler({ReEventNotValidException.class, MethodArgumentNotValidException.class})

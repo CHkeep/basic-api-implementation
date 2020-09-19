@@ -65,18 +65,10 @@ public class RsController{
   }
 
   @PostMapping("/rs/event")
-  public void addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
-    rsEventService.addRsEvent(rsEvent);
-//    rsEventService.
-//    rsEventRepository.save(RsEventPO.builder().eventName("股价").keyWords("经济").userId(1).build());
+  public ResponseEntity addRsEvent(@RequestBody @Valid RsEvent rsEvent) {
+
+      return rsEventService.addRsEvent(rsEvent);
   }
-
-      //返回201，并且返回的头部带上index字段
-//      String index = String.valueOf(this.rsList.indexOf(rsEvent));
-//      return ResponseEntity.status(HttpStatus.CREATED).header("index", index).build();
-
-
-
 
   @DeleteMapping("/rd/{id}")
   public ResponseEntity deleteRsEvent(@PathVariable int id) {

@@ -7,20 +7,15 @@ import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @RestController
 public class UserController {
-    private List<User> userList = new ArrayList<>();
-
     @Autowired
     UserService userService;
     @Autowired
@@ -40,10 +35,9 @@ public class UserController {
     }
 
     @DeleteMapping("/user/{id}")
-    @Transactional
+//    @Transactional
     public ResponseEntity deleteUserById(@PathVariable int id){
         userRepository.deleteById(id);
-//        rsEventRepository.deleteAllByUserId(id);
         return ResponseEntity.ok().build();
     }
 

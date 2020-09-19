@@ -1,7 +1,11 @@
 package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.po.RsEventPO;
+import com.thoughtworks.rslist.po.UserPO;
+import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +20,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -28,13 +31,17 @@ class UserControllerTest {
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RsEventRepository rsEventRepository;
 
     ObjectMapper objectMapper;
 
     @BeforeEach
     void  setUp(){
+        //现场清理
+        userRepository.deleteAll();
+        rsEventRepository.deleteAll();
         objectMapper = new ObjectMapper();
-        //清理数据库
     }
 
     @Test
@@ -90,17 +97,27 @@ class UserControllerTest {
     @Test
     @Order(6)
     protected void should_get_user_by_id() throws Exception {
-        mockMvc.perform(get("/user/1"))
-                .andExpect(jsonPath("$.userName",is("xiaoli")))
-                .andExpect(jsonPath("$.gender",is("male")))
+        UserPO userPO= UserPO.builder().userName("yangyu").age(18).gender("female").phone("19966999999").voteNum(10).build();
+        userRepository.save(userPO);
+        RsEventPO rsEventPO = RsEventPO.builder().eventName("股票").keyWords("金融").userPO(userPO).build();
+        rsEventRepository.save(rsEventPO);
+        mockMvc.perform(get("/user/{id}",userPO.getId()))
+                .andExpect(jsonPath("$.userName",is(userRepository.findById(userPO.getId()).get().getUserName())))
                 .andExpect(status().isOk());
     }
 
-//    @Test
-//    @Order(7)
-//    protected void should_delete_user_by_id() throws Exception {
-//        mockMvc.perform(delete("/user/5"))
-//                .andExpect(status().isOk());
-//    }
+    @Test
+    @Order(7)
+    protected void should_delete_user_by_id() throws Exception {
+        UserPO userPO= UserPO.builder().userName("xiaoyu").age(18).gender("female").phone("19366999999").voteNum(10).build();
+        userRepository.save(userPO);
+        RsEventPO rsEventPO1 = RsEventPO.builder().eventName("xiao1").keyWords("金融1").userPO(userPO).build();
+        rsEventRepository.save(rsEventPO1);
+        RsEventPO rsEventPO = RsEventPO.builder().eventName("xiao").keyWords("金融").userPO(userPO).build();
+        rsEventRepository.save(rsEventPO);
+        mockMvc.perform(delete("/user/{id}", userPO.getId()))
+                .andExpect(status().isOk());
+        assertEquals(Optional.empty(), userRepository.findById(userPO.getId()));
+    }
 
 }

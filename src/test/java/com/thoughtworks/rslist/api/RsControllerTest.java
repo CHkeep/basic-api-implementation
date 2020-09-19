@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.po.RsEventPO;
+import com.thoughtworks.rslist.po.UserPO;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.service.RsEventService;
@@ -16,7 +17,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Optional;
+
+import static java.lang.Integer.valueOf;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -44,6 +49,17 @@ class RsControllerTest {
 //           mockMvc = MockMvcBuilders.standaloneSetup(new RsController()).build();
 //
 //    }
+        @BeforeEach
+        void  setUp(){
+            objectMapper = new ObjectMapper();
+            //清理数据库
+            userRepository.deleteAll();
+
+//            UserPO userPO= UserPO.builder().userName("yangyuling").age(18).gender("female").phone("19966999999").voteNum(10).build();
+//            userRepository.save(userPO);
+//            RsEventPO rsEventPO = RsEventPO.builder().eventName("股票").keyWords("金融").userPO(userPO).build();
+//            rsEventRepository.save(rsEventPO);
+        }
 
     @Test
     @Order(1)
@@ -57,7 +73,6 @@ class RsControllerTest {
     @Test
     @Order(2)
     public void should_get_some_rs_event_list() throws Exception {
-        System.out.println(2);
         mockMvc.perform(get("/rs/list?start=1&end=2"))
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(status().isOk());
@@ -72,28 +87,24 @@ class RsControllerTest {
     @Test
     @Order(3)
     public void should_add_rs_event_when_user_Id_exist() throws Exception {
-        RsEvent rsEvent = new RsEvent("zhurouzhangjiang","经济",1);
+        UserPO userPO= UserPO.builder().userName("xiaoyu").age(18).gender("female").phone("19366999999").voteNum(10).build();
+        userRepository.save(userPO);
+        RsEvent rsEvent = new RsEvent("zhurouzhangjiang","经济",userPO.getId());
         String jsonString = objectMapper.writeValueAsString(rsEvent);
         System.out.println(jsonString);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
+                .andExpect(status().isCreated());
     }
-
 
     @Test
     @Order(4)
     public void should_add_rs_event_when_user_Id_Not_exist() throws Exception {
-        RsEvent rsEvent = new RsEvent("zhurouzhangjiang","经济",5);
+        RsEvent rsEvent = new RsEvent("zhurouzhangjiang","经济",10000);
         String jsonString = objectMapper.writeValueAsString(rsEvent);
         System.out.println(jsonString);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error", is("Unregistered user")));
-
+                .andExpect(status().isBadRequest());
     }
-
-
 
     @Test
     @Order(5)
@@ -102,7 +113,6 @@ class RsControllerTest {
                 .andExpect(status().isCreated());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(status().isOk());
-
     }
 
     @Test
