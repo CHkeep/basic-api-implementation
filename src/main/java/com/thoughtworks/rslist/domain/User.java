@@ -1,7 +1,5 @@
 package com.thoughtworks.rslist.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +23,6 @@ public class User {
     private String email;
     @Pattern(regexp = "1\\d{10}")
     private String phone;
-
     private int voteNum = 10;
 
     public User(String userName, String gender, int age, String email, String phone) {
