@@ -90,7 +90,7 @@ public class VoteControllerTest {
             voteRepository.save(votePO);
         }
 
-        mockMvc.perform(get("/rv/vote").param("localDateTime",String.valueOf(indexTime)));
+        mockMvc.perform(get("/rs/vote").param("localDateTime",String.valueOf(indexTime)));
         assertEquals(8, voteRepository.findAll().size());
 
     }
@@ -110,7 +110,7 @@ public class VoteControllerTest {
             voteRepository.save(votePO);
         }
 
-        mockMvc.perform(get("/rv/vote").param("localDateTime",String.valueOf(indexTime)));
+        mockMvc.perform(get("/rs/vote").param("localDateTime",String.valueOf(indexTime)));
 //               .andExpect(status().isOk());
     }
 
@@ -124,7 +124,7 @@ public class VoteControllerTest {
             voteRepository.save(votePO);
         }
 
-        mockMvc.perform(get("/rv/vote").param("localDateTime", String.valueOf(indexTime)));
+        mockMvc.perform(get("/rs/vote").param("localDateTime", String.valueOf(indexTime)));
 //                     .andExpect(status().isBadRequest());
 
     }
