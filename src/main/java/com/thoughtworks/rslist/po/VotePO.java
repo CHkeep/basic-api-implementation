@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.po;
 
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class VotePO {
     @GeneratedValue
     private int id;
 
+    @JsonEnumDefaultValue
     private LocalDateTime localDateTime;
     private int num;
     @ManyToOne

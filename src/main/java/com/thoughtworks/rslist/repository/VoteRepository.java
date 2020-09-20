@@ -5,6 +5,7 @@ import com.thoughtworks.rslist.po.VotePO;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface VoteRepository extends CrudRepository<VotePO, Integer> {

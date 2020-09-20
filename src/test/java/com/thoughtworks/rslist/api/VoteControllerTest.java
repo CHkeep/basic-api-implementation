@@ -6,8 +6,7 @@ import com.thoughtworks.rslist.po.VotePO;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.repository.VoteRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,9 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class VoteControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -54,6 +55,7 @@ public class VoteControllerTest {
     }
 
     @Test
+//    @Order(1)
     public void should_vote() throws Exception{
         VotePO votePO = VotePO.builder().user(userPO).localDateTime(LocalDateTime.now())
                 .rsEvent(rsEventPO).num(5).build();
@@ -65,6 +67,7 @@ public class VoteControllerTest {
     }
 
     @Test
+//    @Order(2)
     public void should_get_vote_rescord_by_user_id_and_rs_event_id() throws Exception{
         VotePO votePO = VotePO.builder().user(userPO).localDateTime(LocalDateTime.now())
                 .rsEvent(rsEventPO).num(5).build();
@@ -73,6 +76,56 @@ public class VoteControllerTest {
         mockMvc.perform(get("/rs/vote").param("userId",String.valueOf(userPO.getId()))
                 .param("reEventId",String.valueOf(rsEventPO.getId())));
         assertEquals(1, voteRepository.findAll().size());
+
+    }
+
+
+    @Test
+//    @Order(3)
+    public void should_get_vote_rescord_by_time() throws Exception{
+        LocalDateTime indexTime = LocalDateTime.of(2020,8,20,10,10,10);
+        for (int i = 0; i < 8; i++){
+            VotePO votePO = VotePO.builder().user(userPO).localDateTime(LocalDateTime.now())
+                    .rsEvent(rsEventPO).num(1).build();
+            voteRepository.save(votePO);
+        }
+
+        mockMvc.perform(get("/rv/vote").param("localDateTime",String.valueOf(indexTime)));
+        assertEquals(8, voteRepository.findAll().size());
+
+    }
+
+    @Test
+    public void should_get_some_vote_rescord_by_time() throws Exception{
+        LocalDateTime indexTime1 = LocalDateTime.of(2019,7,20,10,10,10);
+        VotePO votePO1 = VotePO.builder().user(userPO).localDateTime(indexTime1)
+                .rsEvent(rsEventPO).num(1).build();
+        voteRepository.save(votePO1);
+
+        LocalDateTime indexTime = LocalDateTime.of(2020,8,20,10,10,10);
+
+        for (int i = 0; i < 8; i++){
+            VotePO votePO = VotePO.builder().user(userPO).localDateTime(LocalDateTime.now())
+                    .rsEvent(rsEventPO).num(1).build();
+            voteRepository.save(votePO);
+        }
+
+        mockMvc.perform(get("/rv/vote").param("localDateTime",String.valueOf(indexTime)));
+//               .andExpect(status().isOk());
+    }
+
+    @Test
+    public void should_throw_get_vote_rescord_by_time() throws Exception{
+        LocalDateTime indexTime = LocalDateTime.of(2090,8,20,10,10,10);
+
+        for (int i = 0; i < 8; i++){
+            VotePO votePO = VotePO.builder().user(userPO).localDateTime(LocalDateTime.now())
+                    .rsEvent(rsEventPO).num(1).build();
+            voteRepository.save(votePO);
+        }
+
+        mockMvc.perform(get("/rv/vote").param("localDateTime", String.valueOf(indexTime)))
+                     .andExpect(status().isBadRequest());
 
     }
 

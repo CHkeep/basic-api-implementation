@@ -10,6 +10,7 @@ import com.thoughtworks.rslist.repository.VoteRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,5 +54,21 @@ public class VoteService {
                                 .time(item.getLocalDateTime())
                                 .voteNum(item.getNum()).build())
                         .collect(Collectors.toList()));
+    }
+
+
+    public ResponseEntity<List<Vote>> getbyVoteTime(LocalDateTime time) {
+        List<VotePO> votePOList = voteRepository.findAll();
+        if(votePOList.get(votePOList.size()-1).getLocalDateTime().compareTo(time) < 0){
+            return ResponseEntity.badRequest().build();
+        }
+    System.out.println(voteRepository.findAll().get(4).getLocalDateTime().compareTo(time) );
+        return ResponseEntity.ok(votePOList.stream()
+                .filter(i-> i.getLocalDateTime().compareTo(time) > 0)
+                .map(item -> Vote.builder().userId(item.getUser().getId())
+                        .rsEventId(item.getRsEvent().getId())
+                        .time(item.getLocalDateTime())
+                        .voteNum(item.getNum()).build())
+                .collect(Collectors.toList()));
     }
 }
