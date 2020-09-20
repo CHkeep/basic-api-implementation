@@ -4,17 +4,11 @@ import com.thoughtworks.rslist.po.UserPO;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserRepository extends CrudRepository<UserPO, Integer> {
     @Override
     List<UserPO> findAll();
 
-    @Override
-    Optional<UserPO> findById(Integer integer);
-
     boolean findByUserName(String name);
 
-    @Override
-    void deleteById(Integer integer);
 }

@@ -4,27 +4,34 @@ import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.po.UserPO;
 import com.thoughtworks.rslist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 
 
 
-@Service
+
+//@Service
+@Configuration
 public class UserService {
-    @Autowired
-    UserRepository userRepository;
+//    @Autowired
+    final UserRepository userRepository;
 
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-    public void addRegisterUser(User user) {
+    public void addRegisterUser(@Valid User user) {
         boolean isPresent = findByUserName(user.getUserName());
         if(!isPresent){
             addRegister(user);
         }
     }
 
-    public void addRegister(User user){
+    public void addRegister(@Valid User user){
         UserPO userPO = new UserPO();
         userPO.setAge(user.getAge());
         userPO.setEmail(user.getEmail());
@@ -41,14 +48,12 @@ public class UserService {
     }
 
 
-    public User getUserById(int id) {
+    public User getUserById(Integer id) {
        Optional<UserPO> userPO = userRepository.findById(id);
         return User.builder().userName(userPO.get().getUserName())
                 .age(userPO.get().getAge()).email(userPO.get().getEmail()).gender(userPO.get().getGender())
                 .phone(userPO.get().getPhone()).voteNum(userPO.get().getVoteNum()).build();
     }
 
-    public void deleteUser(int id) {
-        userRepository.deleteById((int)id);
-    }
+
 }

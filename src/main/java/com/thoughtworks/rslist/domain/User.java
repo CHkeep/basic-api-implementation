@@ -23,15 +23,6 @@ public class User {
     private String email;
     @Pattern(regexp = "1\\d{10}")
     private String phone;
-
     private int voteNum = 10;
-
-    public User(String userName, String gender, int age, String email, String phone) {
-        this.userName = userName;
-        this.gender = gender;
-        this.age = age;
-        this.email = email;
-        this.phone = phone;
-    }
 }
 

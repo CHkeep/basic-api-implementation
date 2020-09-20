@@ -1,13 +1,10 @@
-### 作业要求
-
-#### 实现如下接口
-* 注册用户：参照demo，将注册用户持久化到数据库中(docker容器内启动的mysql数据库，并非内存数据库)
-* 获取用户：新增获取用户接口，传递id返回对应id的用户数据
-* 删除用户：新增删除用户接口，传递id从数据库中删除对应id用户数据
-
-* 写测试！！！
+### 作业描述
 
 
-<span style="color: red"> 注意：最终需要将改动合并到master分支 </span> 
+* 去掉RsService上的@Service注解
+通过使用@Bean这种方式进行spring bean的定义和注入
+reference: https://docs.spring.io/spring-javaconfig/docs/1.0.0.M4/reference/html/ch02s02.html
 
+* 阅读：https://docs.spring.io/spring-boot/docs/2.0.x/reference/html/using-boot-spring-beans-and-dependency-injection.html
+修改所有的service和controller 将依赖注入的方式改为通过构造函数注入（而非直接在字段上添加@Autowired）
 

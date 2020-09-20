@@ -7,13 +7,14 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+
 @ControllerAdvice
 public class RsEventHandler {
     @ExceptionHandler({ReEventNotValidException.class, MethodArgumentNotValidException.class})
-    public ResponseEntity rsExceptionHandler(Exception e){
+    public ResponseEntity rsExceptionHandlerMain(Exception e){
         String errorMessage;
         if(e instanceof MethodArgumentNotValidException){
-            errorMessage = "invalid param";
+            errorMessage = "invalid user";
         }else {
             errorMessage = e.getMessage();
         }
