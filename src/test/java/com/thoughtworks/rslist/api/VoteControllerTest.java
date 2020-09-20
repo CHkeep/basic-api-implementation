@@ -40,9 +40,11 @@ public class VoteControllerTest {
 
     @BeforeEach
     void setUp(){
-        userRepository.deleteAll();
-        rsEventRepository.deleteAll();
+
         voteRepository.deleteAll();
+        rsEventRepository.deleteAll();
+        userRepository.deleteAll();
+
 
         userPO = UserPO.builder().userName("xiangyu").age(22).email("f@d.com")
                 .phone("13333333333").gender("male").voteNum(10).build();
@@ -50,13 +52,26 @@ public class VoteControllerTest {
         rsEventPO = RsEventPO.builder().eventName("yuwen").keyWords("xueke").voteNum(0).build();
         rsEventPO = rsEventRepository.save(rsEventPO);
     }
+
     @Test
-    public void should_get_vote_rescord() throws Exception{
+    public void should_vote() throws Exception{
         VotePO votePO = VotePO.builder().user(userPO).localDateTime(LocalDateTime.now())
                 .rsEvent(rsEventPO).num(5).build();
         voteRepository.save(votePO);
 
         mockMvc.perform(post("/rs/vote").param("reEventId",String.valueOf(rsEventPO.getId())));
+        assertEquals(1, voteRepository.findAll().size());
+
+    }
+
+    @Test
+    public void should_get_vote_rescord_by_user_id_and_rs_event_id() throws Exception{
+        VotePO votePO = VotePO.builder().user(userPO).localDateTime(LocalDateTime.now())
+                .rsEvent(rsEventPO).num(5).build();
+        voteRepository.save(votePO);
+
+        mockMvc.perform(get("/rs/vote").param("userId",String.valueOf(userPO.getId()))
+                .param("reEventId",String.valueOf(rsEventPO.getId())));
         assertEquals(1, voteRepository.findAll().size());
 
     }

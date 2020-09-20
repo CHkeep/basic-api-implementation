@@ -7,9 +7,13 @@ import com.thoughtworks.rslist.po.VotePO;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.repository.VoteRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 public class VoteService {
     final RsEventRepository rsEventRepository;
@@ -39,5 +43,15 @@ public class VoteService {
        rsEventPO1.setVoteNum(rsEventPO1.getVoteNum() - vote.getVoteNum());
        rsEventRepository.save(rsEventPO1);
 
+    }
+
+    public ResponseEntity<List<Vote>> getvotebyUserIdAndRsEventId(int userId, int rsEventId) {
+        return ResponseEntity.ok(
+                voteRepository.findAllByUserIdAndRsEventId(userId,rsEventId).stream()
+                        .map(item->Vote.builder().rsEventId(item.getRsEvent().getId())
+                                .userId(item.getUser().getId())
+                                .time(item.getLocalDateTime())
+                                .voteNum(item.getNum()).build())
+                        .collect(Collectors.toList()));
     }
 }
