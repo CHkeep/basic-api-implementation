@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-//@Service
-@Configuration
+@Service
+//@Configuration
 public class RsEventService {
 
     final RsEventRepository rsEventRepository;

@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-//@Service
-@Configuration
+@Service
+//@Configuration
 public class VoteService {
     final RsEventRepository rsEventRepository;
     final UserRepository userRepository;

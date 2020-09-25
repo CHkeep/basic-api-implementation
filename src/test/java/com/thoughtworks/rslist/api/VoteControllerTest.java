@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.po.RsEventPO;
 import com.thoughtworks.rslist.po.UserPO;
 import com.thoughtworks.rslist.po.VotePO;
@@ -36,15 +37,18 @@ public class VoteControllerTest {
     @Autowired
     VoteRepository voteRepository;
 
+    ObjectMapper objectMapper;
     UserPO userPO;
     RsEventPO rsEventPO;
 
     @BeforeEach
     void setUp(){
 
-        voteRepository.deleteAll();
-        rsEventRepository.deleteAll();
+        objectMapper = new ObjectMapper();
+
         userRepository.deleteAll();
+        rsEventRepository.deleteAll();
+        voteRepository.deleteAll();
 
 
         userPO = UserPO.builder().userName("xiangyu").age(22).email("f@d.com")
@@ -90,8 +94,9 @@ public class VoteControllerTest {
             voteRepository.save(votePO);
         }
 
-        mockMvc.perform(get("/rs/vote").param("localDateTime",String.valueOf(indexTime)));
-        assertEquals(8, voteRepository.findAll().size());
+        mockMvc.perform(get("/rs/vote").param("localDateTime",String.valueOf(indexTime)))
+                .andExpect(jsonPath("$", hasSize(8)));
+
 
     }
 
@@ -104,27 +109,31 @@ public class VoteControllerTest {
 
         LocalDateTime indexTime = LocalDateTime.of(2020,8,20,10,10,10);
 
-        for (int i = 0; i < 8; i++){
+        for (int i = 0; i < 7; i++){
             VotePO votePO = VotePO.builder().user(userPO).localDateTime(LocalDateTime.now())
                     .rsEvent(rsEventPO).num(1).build();
             voteRepository.save(votePO);
         }
 
-        mockMvc.perform(get("/rs/vote").param("localDateTime",String.valueOf(indexTime)));
-//               .andExpect(status().isOk());
+        mockMvc.perform(get("/rs/vote").param("localDateTime",String.valueOf(indexTime)))
+                .andExpect(jsonPath("$", hasSize(7)))
+                .andExpect(status().isOk());
+
     }
 
     @Test
     public void should_throw_get_vote_rescord_by_time() throws Exception{
         LocalDateTime indexTime = LocalDateTime.of(2090,8,20,10,10,10);
-
+//        LocalDateTime time = LocalDateTime.parse(indexTime,)
+//        String jsonStringTime = objectMapper.writeValueAsString(indexTime);
         for (int i = 0; i < 8; i++){
             VotePO votePO = VotePO.builder().user(userPO).localDateTime(LocalDateTime.now())
                     .rsEvent(rsEventPO).num(1).build();
             voteRepository.save(votePO);
         }
 
-        mockMvc.perform(get("/rs/vote").param("localDateTime", String.valueOf(indexTime)));
+        mockMvc.perform(get("/rs/vote").param("localDateTime", String.valueOf(indexTime)))
+                     .andExpect(jsonPath("$", hasSize(0)));
 //                     .andExpect(status().isBadRequest());
 
     }

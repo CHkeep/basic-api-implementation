@@ -41,7 +41,7 @@ class RsControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper;
     UserPO userPO;
     RsEventPO rsEventPO;
 
@@ -55,29 +55,30 @@ class RsControllerTest {
         void  setUp(){
             objectMapper = new ObjectMapper();
             //清理数据库
-            voteRepository.deleteAll();;
-            rsEventRepository.deleteAll();
+
             userRepository.deleteAll();
+            rsEventRepository.deleteAll();
+            voteRepository.deleteAll();
 
             userPO = UserPO.builder().userName("li").age(20).email("f@d.com")
                     .phone("11111111111").gender("male").voteNum(10).build();
             userPO = userRepository.save(userPO);
             rsEventPO = RsEventPO.builder().eventName("yuwen").keyWords("xueke").voteNum(0).build();
-            rsEventRepository.save(rsEventPO);
+            rsEventPO = rsEventRepository.save(rsEventPO);
         }
 
     @Test
     @Order(1)
     public void should_get_one_rs_event_list() throws Exception {
         userPO = UserPO.builder().userName("li").age(20).email("f@d.com")
-                .phone("11111111111").gender("male").voteNum(10).build();
+                .phone("13333333333").gender("male").voteNum(10).build();
         userPO = userRepository.save(userPO);
-        rsEventPO = RsEventPO.builder().eventName("yuwen").keyWords("xueke").voteNum(0).build();
-        rsEventRepository.save(rsEventPO);
+        rsEventPO = RsEventPO.builder().eventName("waiyu").keyWords("xueke").voteNum(0).build();
+        rsEventPO = rsEventRepository.save(rsEventPO);
 
-        mockMvc.perform(get("/rs/{id}",rsEventPO.getId()));
+        mockMvc.perform(get("/rs/{id}",rsEventPO.getId()))
+                .andExpect(jsonPath("$.eventName",is("waiyu")));
 
-        assertEquals(rsEventPO,rsEventRepository.findById(rsEventPO.getId()).get());
     }
 
     @Test
@@ -85,7 +86,7 @@ class RsControllerTest {
     public void should_get_some_rs_event_list() throws Exception {
         userPO = UserPO.builder().userName("liu").age(22).email("f@d.com")
                 .phone("12222222222").gender("male").voteNum(10).build();
-        userRepository.save(userPO);
+        userPO = userRepository.save(userPO);
         rsEventPO = RsEventPO.builder().eventName("shuxue").keyWords("xueke").voteNum(0).build();
         rsEventRepository.save(rsEventPO);
         mockMvc.perform(get("/rs/list?start=1&end=2"));
@@ -99,7 +100,6 @@ class RsControllerTest {
         int  size = rsEventRepository.findAll().size() + 1;
         RsEvent rsEvent = new RsEvent("猪肉涨价了","经济",userPO.getId(),0);
         String jsonString = objectMapper.writeValueAsString(rsEvent);
-        System.out.println(jsonString);
         mockMvc.perform(post("/rs/event").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
