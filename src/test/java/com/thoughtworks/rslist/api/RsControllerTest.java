@@ -45,12 +45,6 @@ class RsControllerTest {
     UserPO userPO;
     RsEventPO rsEventPO;
 
-
-//    @BeforeEach
-//    public void init() {
-//           mockMvc = MockMvcBuilders.standaloneSetup(new RsController()).build();
-//
-//    }
         @BeforeEach
         void  setUp(){
             objectMapper = new ObjectMapper();
@@ -77,7 +71,7 @@ class RsControllerTest {
 
         mockMvc.perform(get("/rs/{id}",rsEventPO.getId()));
 
-        assertEquals(rsEventPO,rsEventRepository.findById(rsEventPO.getId()).get());
+        assertEquals(true,rsEventRepository.existsById(rsEventPO.getId()));
     }
 
     @Test
@@ -89,7 +83,7 @@ class RsControllerTest {
         rsEventPO = RsEventPO.builder().eventName("shuxue").keyWords("xueke").voteNum(0).build();
         rsEventRepository.save(rsEventPO);
         mockMvc.perform(get("/rs/list?start=1&end=2"));
-//
+
         assertEquals(2,rsEventRepository.findAll().size());
     }
 

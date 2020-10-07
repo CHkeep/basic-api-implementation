@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -16,7 +17,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class VotePO {
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private int id;
 
     @JsonEnumDefaultValue
