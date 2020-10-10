@@ -57,14 +57,17 @@ public class VoteService {
     }
 
 
-    public ResponseEntity<List<Vote>> getbyVoteTime(LocalDateTime time) {
+    public ResponseEntity<List<Vote>> getbyVoteTime(String startDate, String endDate) {
+        LocalDateTime localStarDate = LocalDateTime.parse(startDate);
+        LocalDateTime localEndDate = LocalDateTime.parse(endDate);
         List<VotePO> votePOList = voteRepository.findAll();
-        if(votePOList.get(votePOList.size()-1).getLocalDateTime().compareTo(time) < 0){
+        if(votePOList.get(votePOList.size()-1).getLocalDateTime().isBefore(localStarDate)
+                || votePOList.get(0).getLocalDateTime().isAfter(localEndDate)
+                || localStarDate.compareTo(localEndDate)>0){
             return ResponseEntity.badRequest().build();
         }
-    System.out.println(voteRepository.findAll().get(4).getLocalDateTime().compareTo(time) );
         return ResponseEntity.ok(votePOList.stream()
-                .filter(i-> i.getLocalDateTime().compareTo(time) > 0)
+                .filter(i-> i.getLocalDateTime().isBefore(localEndDate) && i.getLocalDateTime().isAfter(localStarDate))
                 .map(item -> Vote.builder().userId(item.getUser().getId())
                         .rsEventId(item.getRsEvent().getId())
                         .time(item.getLocalDateTime())
