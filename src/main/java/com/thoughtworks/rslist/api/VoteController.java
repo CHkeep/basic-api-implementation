@@ -34,8 +34,8 @@ public class VoteController {
     }
 
     @GetMapping("/rv/vote")
-    public ResponseEntity<List<Vote>> getVoteByTime(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime time) {
-        return voteService.getbyVoteTime(time);
+    public ResponseEntity<List<Vote>> getVoteByTime(@RequestParam String startDate, @RequestParam String endDate) {
+        return voteService.getbyVoteTime(startDate,endDate);
     }
 
 }

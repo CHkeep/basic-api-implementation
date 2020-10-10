@@ -1,3 +1,4 @@
+
 package com.thoughtworks.rslist.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,10 +43,9 @@ class UserControllerTest {
     @BeforeEach
     void  setUp(){
         //现场清理
-
-        userRepository.deleteAll();
+        voteRepository.deleteAll();;
         rsEventRepository.deleteAll();
-        voteRepository.deleteAll();
+        userRepository.deleteAll();
 
         objectMapper = new ObjectMapper();
         UserPO userPO= UserPO.builder().userName("xiaochen").age(18).gender("female").phone("10000000001").voteNum(10).build();
@@ -109,7 +109,7 @@ class UserControllerTest {
         userRepository.save(userPO);
         RsEventPO rsEventPO = RsEventPO.builder().eventName("股票").keyWords("金融").userPO(userPO).build();
         rsEventRepository.save(rsEventPO);
-        mockMvc.perform(get("/user/{id}", userPO.getId()))
+        mockMvc.perform(get("/user/{id}",userPO.getId()))
                 .andExpect(jsonPath("$.userName",is(userRepository.findById(userPO.getId()).get().getUserName())))
                 .andExpect(status().isOk());
     }
@@ -127,5 +127,6 @@ class UserControllerTest {
                 .andExpect(status().isOk());
         assertEquals(Optional.empty(), userRepository.findById(userPO.getId()));
     }
+
 
 }

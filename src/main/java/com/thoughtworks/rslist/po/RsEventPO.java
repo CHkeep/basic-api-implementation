@@ -1,3 +1,4 @@
+
 package com.thoughtworks.rslist.po;
 
 import lombok.AllArgsConstructor;
@@ -23,10 +24,10 @@ public class RsEventPO {
     @Column(name = "name")
     private String eventName;
     private String keyWords;
+    @Builder.Default
     private  int voteNum = 0;
     @ManyToOne
     private UserPO userPO;
-
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "rsEvent")
     private List<VotePO> votePOS;
