@@ -7,6 +7,7 @@ import com.thoughtworks.rslist.po.RsEventPO;
 import com.thoughtworks.rslist.po.UserPO;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.repository.VoteRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,14 +34,17 @@ class UserControllerTest {
     UserRepository userRepository;
     @Autowired
     RsEventRepository rsEventRepository;
+    @Autowired
+    VoteRepository voteRepository;
 
     ObjectMapper objectMapper;
 
     @BeforeEach
     void  setUp(){
         //现场清理
-        userRepository.deleteAll();
+        voteRepository.deleteAll();;
         rsEventRepository.deleteAll();
+        userRepository.deleteAll();
 
         objectMapper = new ObjectMapper();
         UserPO userPO= UserPO.builder().userName("xiaochen").age(18).gender("female").phone("10000000001").voteNum(10).build();

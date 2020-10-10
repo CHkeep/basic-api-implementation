@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
@@ -17,7 +18,8 @@ import java.util.List;
 @NoArgsConstructor
 public class UserPO {
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
     private int id;
     @Column(name = "name")
     private String userName;
@@ -29,5 +31,8 @@ public class UserPO {
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "userPO")
     private List<RsEventPO> rsEventPOs;
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "user")
+    private List<VotePO> votePOS;
 
 }

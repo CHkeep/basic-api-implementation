@@ -72,12 +72,13 @@ class RsControllerTest {
         userPO = UserPO.builder().userName("li").age(20).email("f@d.com")
                 .phone("11111111111").gender("male").voteNum(10).build();
         userPO = userRepository.save(userPO);
-        rsEventPO = RsEventPO.builder().eventName("yuwen").keyWords("xueke").voteNum(0).build();
+        rsEventPO = RsEventPO.builder().eventName("shuxue").keyWords("xueke").voteNum(0).build();
         rsEventRepository.save(rsEventPO);
 
-        mockMvc.perform(get("/rs/{id}",rsEventPO.getId()));
+        mockMvc.perform(get("/rs/{id}",rsEventPO.getId()))
+        .andExpect(jsonPath(("$.eventName"),is("shuxue")))
+        .andExpect(status().isOk());
 
-        assertEquals(rsEventPO,rsEventRepository.findById(rsEventPO.getId()).get());
     }
 
     @Test

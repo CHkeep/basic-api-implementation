@@ -19,7 +19,6 @@ public class VotePO {
     @GeneratedValue
     private int id;
 
-    @JsonEnumDefaultValue
     private LocalDateTime localDateTime;
     private int num;
     @ManyToOne
