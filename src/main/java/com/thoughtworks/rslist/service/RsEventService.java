@@ -64,6 +64,9 @@ public class RsEventService {
 
 
     public ResponseEntity<List<RsEvent>> getSomeEvent(Integer start, Integer end) {
+        if(start > end || start <= 0 || end > rsEventRepository.findAll().size()){
+            throw new ReEventNotValidException("invalid request param");
+        }
         List<RsEventPO> rsEventPOList = rsEventRepository.findAll().subList(start, end);
         List<RsEvent> rsEventList = rsEventPOList.stream().map(rsEventPO ->
                 RsEvent.builder().keyWords(rsEventPO.getKeyWords())
@@ -73,9 +76,7 @@ public class RsEventService {
         if (start == null || end == null) {
             return ResponseEntity.ok(rsEventList);
         }
-        if(start > end || start <= 0 || end > rsEventList.size()){
-            return ResponseEntity.badRequest().build();
-        }
+
         return ResponseEntity.ok(rsEventList.subList(start - 1, end));
     }
 
