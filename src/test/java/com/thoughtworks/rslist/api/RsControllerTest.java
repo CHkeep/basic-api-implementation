@@ -89,8 +89,9 @@ class RsControllerTest {
         userRepository.save(userPO);
         rsEventPO = RsEventPO.builder().eventName("shuxue").keyWords("xueke").voteNum(0).build();
         rsEventRepository.save(rsEventPO);
-        mockMvc.perform(get("/rs/list?start=1&end=2"));
-//
+        mockMvc.perform(get("/rs/list").param("start","0")
+        .param("end",String.valueOf(rsEventPO.getId())));
+
         assertEquals(2,rsEventRepository.findAll().size());
     }
 
@@ -198,25 +199,25 @@ class RsControllerTest {
                 .andExpect(jsonPath("$.error", is("invalid index")));
 
     }
-//
-//    @Test
-//    @Order(11)
-//    public void should_throw_rs_event_not_valid_param_exception() throws Exception{
-//        mockMvc.perform(get("/rs/list?start=0&end=4"))
-//                .andExpect(status().isBadRequest())
-//                .andExpect(jsonPath("$.error", is("invalid request param")));
-//
-//    }
+
+    @Test
+    @Order(11)
+    public void should_throw_rs_event_not_valid_param_exception() throws Exception{
+        mockMvc.perform(get("/rs/list?start=0&end=4"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error", is("invalid request param")));
+
+    }
 
 
-//    @Test
-//    @Order(11)
-//    public void should_throw_rs_event_not_valid_rs_event() throws Exception {
-//        User user = new User("xiaozheng","male",  15, "c@b.com", "1555555555",0);
-//        RsEvent rsEvent = new RsEvent( "股票跌了","经济", 1,0);
-//        String jsonString = objectMapper.writeValueAsString(rsEvent);
-//        mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isBadRequest())
+    @Test
+    @Order(11)
+    public void should_throw_rs_event_not_valid_rs_event() throws Exception {
+        User user = new User("xiaozheng","male",  15, "c@b.com", "1555555555",0);
+        RsEvent rsEvent = new RsEvent( "股票跌了","经济", 1,0);
+        String jsonString = objectMapper.writeValueAsString(rsEvent);
+        mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
 //                .andExpect(jsonPath("$.error", is("invalid param")));
-//    }
+    }
 }
